@@ -1,0 +1,74 @@
+#!/bin/bash -e
+
+if [[ -z $1 ]]; then
+    echo usage: make-app APP >&2
+    return 1
+fi
+
+app_dir="$1"
+app=$(tr '[:upper:]' '[:lower:]' <<< $app_dir)
+
+if [[ -d $app_dir ]]; then
+    echo Error: app $app_dir already exists >&2
+    exit 1
+fi
+
+mkdir $app_dir
+cd $app_dir
+
+mkdir -p src/com/example/$app obj bin res/{layout,values,drawable}
+
+cat > src/com/example/$app/MainActivity.java << EOF
+package com.example.$app;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+public class MainActivity extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+EOF
+
+cat > res/values/strings.xml << EOF
+<resources>
+    <string name="app_name">$app_dir</string>
+    <string name="msg">Hello there, I\'m an evil app :)</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+</resources>
+EOF
+
+cat > res/layout/activity_main.xml << EOF
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/msg"
+        tools:context=".MainActivity" />
+</RelativeLayout>
+EOF
+
+cat > AndroidManifest.xml << EOF
+<?xml version='1.0'?>
+<manifest xmlns:a='http://schemas.android.com/apk/res/android' package='com.example.$app' a:versionCode='0' a:versionName='0'>
+    <uses-sdk a:targetSdkVersion="33" />
+
+    <application a:label='$app_dir'>
+        <activity a:name='com.example.$app.MainActivity'>
+            <intent-filter>
+                <category a:name='android.intent.category.LAUNCHER'/>
+                <action a:name='android.intent.action.MAIN'/>
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+EOF

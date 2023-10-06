@@ -1,0 +1,9 @@
+# Compiled binaries
+bin
+*.apk
+
+# Objects
+obj
+
+# Logs
+*log*
