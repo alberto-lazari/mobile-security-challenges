@@ -30,28 +30,13 @@ fi
     'build-tools;33.0.0' \
     "system-images;android-33;google_apis_playstore;$arch"
 
-device_configuration () {
-    # Manually configure
-    echo yes
-    for i in {0..99}; do
-        sleep .01
-        # Keep defaults
-        echo ""
-    done
-
-    # Enable hardware keyboard
-    echo yes
-
-    for i in {0..99}; do
-        sleep .01
-        # Keep defaults
-        echo ""
-    done
-}
 echo Creating virtual device...
-device_configuration | > /dev/null "$prefix/cmdline-tools/latest/bin/avdmanager" create avd --force \
+echo no | "$prefix/cmdline-tools/latest/bin/avdmanager" create avd --force \
     -n mobiotsec \
-    -k "system-images;android-33;google_apis_playstore;$arch" \
+    -k "system-images;android-33;google_apis_playstore;$arch"
+
+# Enable buttons
+sed -i'' -e 's/^hw\.keyboard=no/hw.keyboard=yes/' ~/.android/avd/mobiotsec.avd/config.ini
 
 # Download x86 emulator
 if [[ $arch = x86_64 ]] && [[ ! -d "$prefix/emulator-x86" ]]; then
