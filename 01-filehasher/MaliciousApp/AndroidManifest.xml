@@ -3,8 +3,7 @@
     <uses-sdk a:targetSdkVersion="33" />
 
     <application a:label='MaliciousApp'>
-        <activity a:name='com.example.maliciousapp.MainActivity'
-            a:exported="true">
+        <activity a:name='com.example.maliciousapp.MainActivity' a:exported="true">
             <intent-filter>
                 <category a:name='android.intent.category.LAUNCHER'/>
                 <action a:name='android.intent.action.MAIN'/>

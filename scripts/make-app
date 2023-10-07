@@ -63,7 +63,7 @@ cat > AndroidManifest.xml << EOF
     <uses-sdk a:targetSdkVersion="33" />
 
     <application a:label='$app_dir'>
-        <activity a:name='com.example.$app.MainActivity'>
+        <activity a:name='com.example.$app.MainActivity' a:exported="true">
             <intent-filter>
                 <category a:name='android.intent.category.LAUNCHER'/>
                 <action a:name='android.intent.action.MAIN'/>
