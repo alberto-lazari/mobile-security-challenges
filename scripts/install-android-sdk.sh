@@ -1,5 +1,7 @@
 #!/bin/bash
 
+script_dir="$(dirname "$(readlink -f "$BASH_SOURCE")")"
+
 if [[ $(arch) = arm64 ]]; then
     arch=arm64-v8a
     emulator=emulator
@@ -32,13 +34,15 @@ if [[ $arch = x86_64 ]] && [[ ! -d "$prefix/emulator-x86" ]]; then
     mv emulator "$prefix/emulator-x86/"
 fi
 
-# Link binaries in a PATH directory
+# Link useful binaries and scripts in a PATH directory
 [[ -d ~/bin ]] || mkdir ~/bin
-[[ ! -f ~/bin/adb ]] || rm ~/bin/adb
+for link in ~/bin/{adb,emulator,make-app,build-app}; do
+    [[ ! -f $link ]] || rm $link
+done
 ln -s "$prefix/platform-tools/adb" ~/bin/adb
-
-[[ ! -f ~/bin/emulator ]] || rm ~/bin/emulator
 ln -s "$prefix/$emulator/emulator" ~/bin/emulator
+ln -s "$script_dir/make-app" ~/bin/make-app
+ln -s "$script_dir/build-app" ~/bin/build-app
 
 # Add ~/bin to PATH
 if ! which adb &> /dev/null; then
