@@ -24,8 +24,34 @@ else
     fi
 fi
 
-"$prefix/cmdline-tools/latest/bin/sdkmanager" --install 'platform-tools' 'platforms;android-33' 'build-tools;33.0.0' "system-images;android-33;google_apis_playstore;$arch"
-"$prefix/cmdline-tools/latest/bin/avdmanager" create avd --name mobiotsec -k "system-images;android-33;google_apis_playstore;$arch"
+"$prefix/cmdline-tools/latest/bin/sdkmanager" --install \
+    'platform-tools' \
+    'platforms;android-33' \
+    'build-tools;33.0.0' \
+    "system-images;android-33;google_apis_playstore;$arch"
+
+device_configuration () {
+    # Manually configure
+    echo yes
+    for i in {0..99}; do
+        sleep .01
+        # Keep defaults
+        echo ""
+    done
+
+    # Enable hardware keyboard
+    echo yes
+
+    for i in {0..99}; do
+        sleep .01
+        # Keep defaults
+        echo ""
+    done
+}
+echo Creating virtual device...
+device_configuration | > /dev/null "$prefix/cmdline-tools/latest/bin/avdmanager" create avd --force \
+    -n mobiotsec \
+    -k "system-images;android-33;google_apis_playstore;$arch" \
 
 # Download x86 emulator
 if [[ $arch = x86_64 ]] && [[ ! -d "$prefix/emulator-x86" ]]; then
@@ -57,5 +83,5 @@ pip3 list | grep androguard &> /dev/null || pip3 install androguard
 cat << EOF
 
 Run the Android emulator with:
-  emulator -avd mobiotsec -no-snapshot -no-boot-anim -wipe-data &> /dev/null &
+  emulator -avd mobiotsec -no-boot-anim -no-audio -accel on -gpu swiftshader_indirect &> ~/.android/emulator.log &
 EOF
