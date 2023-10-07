@@ -8,7 +8,7 @@ fi
 
 app_dir="$1"
 app=$(tr '[:upper:]' '[:lower:]' <<< $app_dir)
-prefix="$(brew --prefix)/share/android-commandlinetools"
+prefix="$(realpath $(realpath $(which sdkmanager))/../../../..)"
 build_tools="$prefix/build-tools/33.0.0"
 key=~/.android/mykey.keystore
 
