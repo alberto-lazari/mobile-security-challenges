@@ -1,5 +1,4 @@
 #!/bin/bash -e
-# From: https://authmane510.medium.com/how-to-build-an-apk-from-command-line-without-ide-7260e1e22676
 
 if [[ -z $1 ]]; then
     echo usage: build-app APP_DIR >&2
@@ -11,27 +10,13 @@ app=$(tr '[:upper:]' '[:lower:]' <<< $app_dir)
 prefix="$(realpath $(realpath $(which sdkmanager))/../../../..)"
 build_tools="$prefix/build-tools/33.0.0"
 key=~/.android/mykey.keystore
+apk=app/build/outputs/apk/release/app-release-unsigned.apk
 
-AAPT="$build_tools/aapt"
-D8="$build_tools/d8"
-ZIPALIGN="$build_tools/zipalign"
 APKSIGNER="$build_tools/apksigner"
-PLATFORM="$prefix/platforms/android-33/android.jar"
 
 cd $app_dir
 
-rm -rf obj/* src/com/example/$app/R.java &> /dev/null || true
-
-$AAPT package -f -m -J src -M AndroidManifest.xml -S res -I $PLATFORM
-
-javac -d obj -classpath src -bootclasspath $PLATFORM -source 1.8 -target 1.8 src/com/example/$app/MainActivity.java
-javac -d obj -classpath src -bootclasspath $PLATFORM -source 1.8 -target 1.8 src/com/example/$app/R.java
-
-zip -r obj obj > /dev/null
-$D8 --no-desugaring obj.zip && rm obj.zip
-
-$AAPT package -f -m -F bin/$app.unaligned.apk -M AndroidManifest.xml -S res -I $PLATFORM
-$AAPT add bin/$app.unaligned.apk classes.dex > /dev/null
+gradle build
 
 if [[ ! -f $key ]]; then
     cat >&2 <<- EOF
@@ -41,8 +26,7 @@ if [[ ! -f $key ]]; then
 	EOF
     exit 1
 fi
-$ZIPALIGN -f 4 bin/$app.unaligned.apk bin/$app.apk
-$APKSIGNER sign --ks $key --ks-pass pass:password bin/$app.apk
+$APKSIGNER sign --ks $key --ks-pass pass:password $apk
 
 # Move the apk outside of the app directory
-mv bin/$app.apk ../
+mv $apk ../$app.apk

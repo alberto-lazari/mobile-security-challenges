@@ -13,18 +13,18 @@ if [[ -d $app_dir ]]; then
     exit 1
 fi
 
-mkdir $app_dir
-cd $app_dir
+mkdir -p $app_dir/app
+cd $app_dir/app
 
-mkdir -p src/com/example/$app obj bin res/{layout,values,drawable}
+mkdir -p src/main/java/com/example/$app libs src/main/res/{layout,values,drawable}
 
-cat > src/com/example/$app/MainActivity.java << EOF
+cat > src/main/java/com/example/$app/MainActivity.java << EOF
 package com.example.$app;
 
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +33,7 @@ public class MainActivity extends Activity {
 }
 EOF
 
-cat > res/values/strings.xml << EOF
+cat > src/main/res/values/strings.xml << EOF
 <resources>
     <string name="app_name">$app_dir</string>
     <string name="msg">Hello there, I\'m an evil app :)</string>
@@ -42,7 +42,7 @@ cat > res/values/strings.xml << EOF
 </resources>
 EOF
 
-cat > res/layout/activity_main.xml << EOF
+cat > src/main/res/layout/activity_main.xml << EOF
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -57,18 +57,91 @@ cat > res/layout/activity_main.xml << EOF
 </RelativeLayout>
 EOF
 
-cat > AndroidManifest.xml << EOF
+cat > src/main/AndroidManifest.xml << EOF
 <?xml version='1.0'?>
-<manifest xmlns:a='http://schemas.android.com/apk/res/android' package='com.example.$app' a:versionCode='0' a:versionName='0'>
-    <uses-sdk a:targetSdkVersion='33' />
+<manifest xmlns:android='http://schemas.android.com/apk/res/android' android:versionCode='0' android:versionName='0'>
+    <uses-sdk android:targetSdkVersion='33' />
 
-    <application a:label='$app_dir'>
-        <activity a:name='com.example.$app.MainActivity' a:exported='true'>
+    <application android:label='$app_dir'>
+        <activity android:name='.MainActivity' android:exported='true'>
             <intent-filter>
-                <category a:name='android.intent.category.LAUNCHER' />
-                <action a:name='android.intent.action.MAIN' />
+                <category android:name='android.intent.category.LAUNCHER' />
+                <action android:name='android.intent.action.MAIN' />
             </intent-filter>
         </activity>
     </application>
 </manifest>
+EOF
+
+cat > build.gradle.kts << EOF
+plugins {
+    id("com.android.application")
+}
+
+android {
+    namespace = "com.example.$app"
+    compileSdk = 33
+
+    defaultConfig {
+        applicationId = "com.example.$app"
+        minSdk = 33
+        targetSdk = 33
+        versionCode = 1
+        versionName = "1.0"
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.9.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+}
+EOF
+
+cd ..
+
+cat > build.gradle.kts << EOF
+plugins {
+    id("com.android.application") version "8.1.0" apply false
+}
+EOF
+
+cat > settings.gradle.kts << EOF
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "$app_dir"
+include(":app")
+EOF
+
+cat > gradle.properties << EOF
+org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+android.useAndroidX=true
+android.nonTransitiveRClass=true
+EOF
+
+cat > 'local.properties' << EOF
+sdk.dir=$(realpath $(realpath $(which sdkmanager))/../../../..)
 EOF

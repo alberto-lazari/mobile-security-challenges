@@ -1,9 +1,7 @@
 # Compiled binaries
-bin
+**/app/build
 *.apk
-
-# Objects
-obj
+.gradle
 
 # Logs
 *log*
