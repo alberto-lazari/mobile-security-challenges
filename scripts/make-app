@@ -60,13 +60,13 @@ EOF
 cat > AndroidManifest.xml << EOF
 <?xml version='1.0'?>
 <manifest xmlns:a='http://schemas.android.com/apk/res/android' package='com.example.$app' a:versionCode='0' a:versionName='0'>
-    <uses-sdk a:targetSdkVersion='33'/>
+    <uses-sdk a:targetSdkVersion='33' />
 
     <application a:label='$app_dir'>
         <activity a:name='com.example.$app.MainActivity' a:exported='true'>
             <intent-filter>
-                <category a:name='android.intent.category.LAUNCHER'/>
-                <action a:name='android.intent.action.MAIN'/>
+                <category a:name='android.intent.category.LAUNCHER' />
+                <action a:name='android.intent.action.MAIN' />
             </intent-filter>
         </activity>
     </application>
