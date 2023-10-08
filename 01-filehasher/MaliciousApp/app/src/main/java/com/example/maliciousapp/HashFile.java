@@ -5,19 +5,17 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 import org.apache.commons.codec.digest.DigestUtils;
+import java.io.InputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import android.content.Context;
 import android.net.Uri;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import android.content.ContentResolver;
 import android.app.Activity;
 
 public class HashFile extends AppCompatActivity {
-    public static FileInputStream getFileInputStreamFromContentUri(Context context, Uri contentUri) throws IOException {
-        ContentResolver contentResolver = context.getContentResolver();
-        InputStream inputStream = contentResolver.openInputStream(contentUri);
+    public static FileInputStream getFileInputStream(final Context context, final Uri contentUri) throws IOException {
+        final InputStream inputStream = context.getContentResolver()
+                                         .openInputStream(contentUri);
         return inputStream instanceof FileInputStream ? (FileInputStream) inputStream : null;
     }
 
@@ -30,18 +28,17 @@ public class HashFile extends AppCompatActivity {
 
         String hash = null;
         try {
-            final FileInputStream fileInputStream = getFileInputStreamFromContentUri(this, intent.getData());
+            final FileInputStream fileInputStream = getFileInputStream(this, intent.getData());
             hash = DigestUtils.sha256Hex(fileInputStream);
         } catch (Exception e) {
             hash = e.getMessage();
         }
 
+        // Print hash on the app for debug
         final TextView text = findViewById(R.id.text);
         text.setText("Hash: " + hash);
 
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("hash", hash);
-        setResult(Activity.RESULT_OK, resultIntent);
+        setResult(Activity.RESULT_OK, new Intent().putExtra("hash", hash));
         finish();
     }
 }
