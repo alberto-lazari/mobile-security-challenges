@@ -9,5 +9,13 @@
                 <action android:name='android.intent.action.MAIN' />
             </intent-filter>
         </activity>
+
+        <activity android:name='.HashFile' android:exported='true'>
+            <intent-filter>
+                <action android:name="com.mobiotsec.intent.action.HASHFILE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
