@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import android.content.ContentResolver;
+import android.app.Activity;
 
 public class HashFile extends AppCompatActivity {
     public static FileInputStream getFileInputStreamFromContentUri(Context context, Uri contentUri) throws IOException {
@@ -37,6 +38,11 @@ public class HashFile extends AppCompatActivity {
 
         final TextView text = findViewById(R.id.text);
         text.setText("Hash: " + hash);
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("hash", hash);
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
     }
 }
 
