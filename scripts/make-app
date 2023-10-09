@@ -7,6 +7,7 @@ fi
 
 app_dir="$1"
 app=$(tr '[:upper:]' '[:lower:]' <<< $app_dir)
+lang=${lang:-kotlin}
 
 if [[ -d $app_dir ]]; then
     echo Error: app $app_dir already exists >&2
@@ -18,20 +19,56 @@ cd $app_dir/app
 
 mkdir -p src/main/java/com/example/$app libs src/main/res/{layout,values,drawable}
 
-cat > src/main/java/com/example/$app/MainActivity.java << EOF
-package com.example.$app;
+cat > src/main/AndroidManifest.xml << EOF
+<?xml version="1.0"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="0"
+    android:versionName="0">
+    <uses-sdk android:targetSdkVersion="33" />
 
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-
-public class MainActivity extends AppCompatActivity {
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-}
+    <application
+        android:label="$app_dir"
+        android:theme="@style/Theme.AppCompat.DayNight">
+        <activity android:name=".MainActivity" android:exported="true">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
 EOF
+
+if [[ "$lang" = java ]]; then
+    cat > src/main/java/com/example/$app/MainActivity.java <<- EOF
+	package com.example.$app;
+
+	import androidx.appcompat.app.AppCompatActivity;
+	import android.os.Bundle;
+
+	public class MainActivity extends AppCompatActivity {
+	    @Override
+	    protected void onCreate(Bundle savedInstanceState) {
+	        super.onCreate(savedInstanceState);
+	        setContentView(R.layout.activity_main);
+	    }
+	}
+	EOF
+else
+    cat > src/main/java/com/example/$app/MainActivity.kt <<- EOF
+	package com.example.$app
+
+	import androidx.appcompat.app.AppCompatActivity
+	import android.os.Bundle
+
+	class MainActivity : AppCompatActivity() {
+	    override fun onCreate(savedInstanceState: Bundle?) {
+	        super.onCreate(savedInstanceState)
+	        setContentView(R.layout.activity_main)
+	    }
+	}
+	EOF
+fi
 
 cat > src/main/res/values/strings.xml << EOF
 <resources>
@@ -57,25 +94,10 @@ cat > src/main/res/layout/activity_main.xml << EOF
 </RelativeLayout>
 EOF
 
-cat > src/main/AndroidManifest.xml << EOF
-<?xml version='1.0'?>
-<manifest xmlns:android='http://schemas.android.com/apk/res/android' android:versionCode='0' android:versionName='0'>
-    <uses-sdk android:targetSdkVersion='33' />
-
-    <application android:label='$app_dir' android:theme="@style/Theme.AppCompat.Light">
-        <activity android:name='.MainActivity' android:exported='true'>
-            <intent-filter>
-                <category android:name='android.intent.category.LAUNCHER' />
-                <action android:name='android.intent.action.MAIN' />
-            </intent-filter>
-        </activity>
-    </application>
-</manifest>
-EOF
-
 cat > build.gradle.kts << EOF
 plugins {
-    id("com.android.application")
+    id("com.android.application")$([[ "$lang" = kotlin ]] && echo '
+    id("org.jetbrains.kotlin.android")')
 }
 
 android {
@@ -98,10 +120,14 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
+    }$([[ "$lang" = kotlin ]] && echo '
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }')
 }
 
-dependencies {
+dependencies {$([[ "$lang" = kotlin ]] && echo '
+    implementation("androidx.core:core-ktx:1.9.0")')
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
@@ -112,7 +138,8 @@ cd ..
 
 cat > build.gradle.kts << EOF
 plugins {
-    id("com.android.application") version "8.1.0" apply false
+    id("com.android.application") version "8.1.0" apply false$([[ "$lang" = kotlin ]] && echo '
+    id("org.jetbrains.kotlin.android") version "1.9.0" apply false')
 }
 EOF
 
