@@ -23,8 +23,6 @@ class HashFile : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.hash_file)
 
-        // val intent = intent
-
         var hash: String? = null
         try {
             val fileInputStream = getFileInputStream(this, intent.data!!)
