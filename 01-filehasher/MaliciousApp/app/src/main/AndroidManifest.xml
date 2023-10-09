@@ -2,7 +2,7 @@
 <manifest xmlns:android='http://schemas.android.com/apk/res/android' android:versionCode='0' android:versionName='0'>
     <uses-sdk android:targetSdkVersion='33' />
 
-    <application android:label='MaliciousApp' android:theme="@style/Theme.AppCompat.Light">
+    <application android:label='MaliciousApp' android:theme='@style/Theme.AppCompat.DayNight'>
         <activity android:name='.MainActivity' android:exported='true'>
             <intent-filter>
                 <category android:name='android.intent.category.LAUNCHER' />
@@ -12,9 +12,9 @@
 
         <activity android:name='.HashFile' android:exported='true'>
             <intent-filter>
-                <action android:name="com.mobiotsec.intent.action.HASHFILE" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="text/plain" />
+                <action android:name='com.mobiotsec.intent.action.HASHFILE' />
+                <category android:name='android.intent.category.DEFAULT' />
+                <data android:mimeType='text/plain' />
             </intent-filter>
         </activity>
     </application>

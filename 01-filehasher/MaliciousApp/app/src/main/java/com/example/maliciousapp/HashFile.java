@@ -13,9 +13,12 @@ import android.net.Uri;
 import android.app.Activity;
 
 public class HashFile extends AppCompatActivity {
-    public static FileInputStream getFileInputStream(final Context context, final Uri contentUri) throws IOException {
+    public static FileInputStream getFileInputStream(
+        final Context context,
+        final Uri contentUri
+    ) throws IOException {
         final InputStream inputStream = context.getContentResolver()
-                                         .openInputStream(contentUri);
+                                               .openInputStream(contentUri);
         return inputStream instanceof FileInputStream ? (FileInputStream) inputStream : null;
     }
 
