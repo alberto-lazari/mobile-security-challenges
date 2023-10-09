@@ -13,34 +13,30 @@ import android.net.Uri
 import android.app.Activity
 
 class HashFile : AppCompatActivity() {
-    // public static FileInputStream getFileInputStream(
-    //     final Context context,
-    //     final Uri contentUri
-    // ) throws IOException {
-    //     final InputStream inputStream = context.getContentResolver()
-    //                                            .openInputStream(contentUri);
-    //     return inputStream instanceof FileInputStream ? (FileInputStream) inputStream : null;
-    // }
+    @Throws(IOException::class)
+    fun getFileInputStream(context: Context, contentUri: Uri): FileInputStream? {
+        val inputStream: InputStream? = context.contentResolver.openInputStream(contentUri)
+        return if (inputStream is FileInputStream) inputStream else null
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.hash_file)
 
-        // final Intent intent = getIntent();
+        // val intent = intent
 
-        // String hash = null;
-        // try {
-        //     final FileInputStream fileInputStream = getFileInputStream(this, intent.getData());
-        //     hash = DigestUtils.sha256Hex(fileInputStream);
-        // } catch (Exception e) {
-        //     hash = e.getMessage();
-        // }
+        var hash: String? = null
+        try {
+            val fileInputStream = getFileInputStream(this, intent.data!!)
+            hash = DigestUtils.sha256Hex(fileInputStream)
+        } catch (e: Exception) {
+            hash = e.message
+        }
 
-        // // Print hash on the app for debug
-        // final TextView text = findViewById(R.id.text);
-        // text.setText("Hash: " + hash);
+        // Print hash on the app for debug
+        findViewById<TextView>(R.id.text).text = "Hash: $hash"
 
-        // setResult(Activity.RESULT_OK, new Intent().putExtra("hash", hash));
-        // finish();
+        setResult(Activity.RESULT_OK, Intent().putExtra("hash", hash))
+        finish()
     }
 }
