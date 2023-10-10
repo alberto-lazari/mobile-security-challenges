@@ -12,8 +12,7 @@ class HashFile : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.hash_file)
 
-        val fileUri = intent.data
-        if (fileUri != null) {
+        intent.data?.let { fileUri ->
             val fileInputStream = contentResolver.openInputStream(fileUri)
             val hash = DigestUtils.sha256Hex(fileInputStream)
 
