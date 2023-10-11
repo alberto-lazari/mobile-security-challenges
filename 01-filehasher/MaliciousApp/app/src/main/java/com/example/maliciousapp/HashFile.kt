@@ -1,24 +1,35 @@
 package com.example.maliciousapp
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.content.Intent
-import android.widget.TextView
-import org.apache.commons.codec.digest.DigestUtils
 import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import java.security.MessageDigest
+import org.bouncycastle.util.encoders.Hex
 
 class HashFile : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Display activity layout
         super.onCreate(savedInstanceState)
         setContentView(R.layout.hash_file)
 
+        // Get intent
         intent.data?.let { fileUri ->
-            val fileInputStream = contentResolver.openInputStream(fileUri)
-            val hash = DigestUtils.sha256Hex(fileInputStream)
+            // Get file content bytes
+            val bytes = contentResolver
+                .openInputStream(fileUri)
+                ?.readAllBytes()
 
-            // Print hash on the app for debug
-            findViewById<TextView>(R.id.text).text = "Hash: $hash"
+            // Hash file content
+            val hashedBytes = MessageDigest
+                .getInstance("SHA-256")
+                .apply { update(bytes) }
+                .digest()
 
+            // Get hex representation of hashed bytes
+            val hash = Hex.toHexString(hashedBytes)
+
+            // Return the hash
             setResult(Activity.RESULT_OK, Intent().putExtra("hash", hash))
             finish()
         }

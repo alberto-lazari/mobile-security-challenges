@@ -8,6 +8,6 @@
         android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hash"
+        android:text="HashFile"
         android:textSize="24sp" />
 </RelativeLayout>
