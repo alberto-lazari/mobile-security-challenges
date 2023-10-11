@@ -30,7 +30,10 @@ class HashFile : AppCompatActivity() {
             val hash = Hex.toHexString(hashedBytes)
 
             // Return the hash
-            setResult(Activity.RESULT_OK, Intent().putExtra("hash", hash))
+            setResult(
+                Activity.RESULT_OK,
+                Intent().putExtra("hash", hash)
+            )
             finish()
         }
     }
