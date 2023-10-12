@@ -13,7 +13,7 @@ class PartOne : AppCompatActivity() {
         setContentView(R.layout.receive_intent)
 
         intent.data?.let { fileUri ->
-            findViewById<TextView>(R.id.text).text = "Content: ${ fileUri.toString() }"
+            findViewById<TextView>(R.id.debug_text).text = "Content: ${ fileUri.toString() }"
         }
     }
 }
