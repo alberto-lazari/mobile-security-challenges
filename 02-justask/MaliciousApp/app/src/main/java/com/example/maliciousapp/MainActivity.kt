@@ -8,6 +8,8 @@ import android.content.ComponentName
 import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
+    var flag = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -32,6 +34,13 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(resultCode, resultCode, intent)
 
         val view = findViewById<TextView>(R.id.debug_text)
-        view.text = "Result code: $resultCode"
+        // View what keys were put
+        intent?.getExtras()?.let { extras ->
+            view.text = "Keys found: " + extras
+                .keySet()
+                .fold("") { acc, key -> acc + " " + key }
+            flag += extras.getParcelable("flag")
+            view.text = flag
+        }
     }
 }
