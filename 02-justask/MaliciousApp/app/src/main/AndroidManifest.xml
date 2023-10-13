@@ -13,6 +13,9 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".PartOne" android:exported="true" />
+        <activity android:name=".PartOne" />
+        <activity android:name=".PartTwo" />
+        <activity android:name=".PartThree" />
+        <activity android:name=".PartFour" />
     </application>
 </manifest>

