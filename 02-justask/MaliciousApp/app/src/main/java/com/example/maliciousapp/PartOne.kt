@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -26,14 +27,15 @@ class PartOne : AppCompatActivity() {
 
         val view = findViewById<TextView>(R.id.debug_text)
         intent?.getExtras()?.let { extras ->
-            val flagPart = extras
+            val flag = extras
                 .keySet()
                 .fold("") { acc, key -> acc + extras.getCharSequence(key) }
-            view.text = flagPart
+            view.text = flag
+            Log.w("MOBIOTSEC", "Part 1: $flag")
 
             startActivity(
                 Intent(this, PartTwo::class.java)
-                    .putExtra("flag", flagPart)
+                    .putExtra("flag", flag)
             )
         }
     }

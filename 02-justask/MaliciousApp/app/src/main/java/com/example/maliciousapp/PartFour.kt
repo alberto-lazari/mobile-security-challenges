@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -37,6 +38,7 @@ class PartFour : AppCompatActivity() {
             }
             flag += bundle?.getCharSequence("never ending story")
             view.text = flag
+            Log.w("MOBIOTSEC", "Flag: $flag")
         }
     }
 }

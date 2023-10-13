@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -29,6 +30,7 @@ class PartTwo : AppCompatActivity() {
                 .keySet()
                 .fold("") { acc, key -> acc + extras.getCharSequence(key) }
             view.text = flag
+            Log.w("MOBIOTSEC", "Part 2: $flag")
 
             startActivity(
                 Intent(this, PartThree::class.java)
