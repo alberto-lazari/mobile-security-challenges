@@ -25,14 +25,18 @@ class PartFour : AppCompatActivity() {
 
         val view = findViewById<TextView>(R.id.debug_text)
         intent?.getExtras()?.let { extras ->
-            view.text = extras
-                .keySet()
-                .fold("") { acc, key -> acc + key }
-
-            // flag += extras
-            //     .keySet()
-            //     .fold("") { acc, key -> acc + extras.getCharSequence(key) }
-            // view.text = flag
+            var bundle = extras.getBundle("follow")
+            val keys = listOf(
+                "the value",
+                "rabbit",
+                "hole",
+                "deeper",
+            )
+            for (key in keys) {
+                bundle = bundle?.getBundle(key)
+            }
+            flag += bundle?.getCharSequence("never ending story")
+            view.text = flag
         }
     }
 }
