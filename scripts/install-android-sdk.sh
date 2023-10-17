@@ -2,7 +2,7 @@
 
 script_dir="$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-if [[ $(arch) = arm64 ]]; then
+if [[ $(arch 2> /dev/null) = arm64 ]]; then
     arch=arm64-v8a
     emulator=emulator
 else
@@ -19,7 +19,8 @@ else
 
     # Get from curl
     if ! [[ -d $prefix/cmdline-tools/latest ]]; then
-        curl -L 'https://dl.google.com/android/repository/commandlinetools-mac-10406996_latest.zip' | bsdtar -xpf -
+        curl -L 'https://dl.google.com/android/repository/commandlinetools-mac-10406996_latest.zip' |
+            bsdtar -xpf -
         mv cmdline-tools $prefix/cmdline-tools/latest
     fi
 fi
@@ -40,7 +41,8 @@ sed -i'' -e 's/^hw\.keyboard=no/hw.keyboard=yes/' ~/.android/avd/mobiotsec.avd/c
 
 # Download x86 emulator
 if [[ $arch = x86_64 ]] && [[ ! -d "$prefix/emulator-x86" ]]; then
-    curl -L 'https://redirector.gvt1.com/edgedl/android/repository/emulator-darwin_x64-10696886.zip' | bsdtar -xpf -
+    curl -L 'https://redirector.gvt1.com/edgedl/android/repository/emulator-darwin_x64-10696886.zip' |
+        bsdtar -xpf -
     chmod +x emulator/emulator emulator/qemu/darwin-x86_64/qemu-system-x86_64
     mv emulator "$prefix/emulator-x86/"
 fi
@@ -51,9 +53,9 @@ for link in ~/bin/{adb,emulator,make-app,build-app}; do
     [[ ! -f $link ]] || rm $link
 done
 ln -s "$prefix/platform-tools/adb" ~/bin/adb
-ln -s "$prefix/$emulator/emulator" ~/bin/emulator
 ln -s "$script_dir/make-app" ~/bin/make-app
 ln -s "$script_dir/build-app" ~/bin/build-app
+ln -s "$script_dir/emulator" ~/bin/emulator
 
 # Add ~/bin to PATH
 if ! which adb &> /dev/null; then
@@ -64,9 +66,3 @@ fi
 
 # Python scripts will need a non-trivial library
 pip3 list | grep androguard &> /dev/null || pip3 install androguard
-
-cat << EOF
-
-Run the Android emulator with:
-  emulator -avd mobiotsec -no-boot-anim -no-audio -accel on -gpu swiftshader_indirect &> ~/.android/emulator.log &
-EOF
