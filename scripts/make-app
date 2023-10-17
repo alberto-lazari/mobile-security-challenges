@@ -43,8 +43,9 @@ if [[ "$lang" = java ]]; then
     cat > src/main/java/com/example/$app/MainActivity.java <<- EOF
 	package com.example.$app;
 
-	import androidx.appcompat.app.AppCompatActivity;
 	import android.os.Bundle;
+
+	import androidx.appcompat.app.AppCompatActivity;
 
 	public class MainActivity extends AppCompatActivity {
 	    @Override
@@ -58,8 +59,9 @@ else
     cat > src/main/java/com/example/$app/MainActivity.kt <<- EOF
 	package com.example.$app
 
-	import androidx.appcompat.app.AppCompatActivity
 	import android.os.Bundle
+
+	import androidx.appcompat.app.AppCompatActivity
 
 	class MainActivity : AppCompatActivity() {
 	    override fun onCreate(savedInstanceState: Bundle?) {
