@@ -1,11 +1,11 @@
 package com.example.maliciousapp
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
+
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
 class PartOne : AppCompatActivity() {
@@ -19,24 +19,19 @@ class PartOne : AppCompatActivity() {
                 "com.example.victimapp.PartOne"
             )
         }
-        startActivityForResult(intent, 1)
-    }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(resultCode, resultCode, intent)
+        val contract = ActivityResultContracts.StartActivityForResult()
+        registerForActivityResult(contract) { result ->
+            val flagPart = result
+                .data
+                ?.getStringExtra("flag")
+                ?: "[null]"
 
-        val view = findViewById<TextView>(R.id.debug_text)
-        intent?.getExtras()?.let { extras ->
-            val flag = extras
-                .keySet()
-                .fold("") { acc, key -> acc + extras.getCharSequence(key) }
-            view.text = flag
-            Log.w("MOBIOTSEC", "Part 1: $flag")
-
+            Log.w("MOBIOTSEC", "Part 1: $flagPart")
             startActivity(
                 Intent(this, PartTwo::class.java)
-                    .putExtra("flag", flag)
+                    .putExtra("flag", flagPart)
             )
-        }
+        }.launch(intent)
     }
 }

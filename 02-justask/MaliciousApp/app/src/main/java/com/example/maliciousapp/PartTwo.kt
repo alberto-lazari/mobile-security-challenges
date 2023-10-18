@@ -1,41 +1,32 @@
 package com.example.maliciousapp
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.TextView
+
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
 class PartTwo : AppCompatActivity() {
-    var flag = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        flag = intent?.getStringExtra("flag") ?: "[null]"
+        val partialFlag = intent?.getStringExtra("flag") ?: "[null]"
 
-        val sendIntent = Intent("com.example.victimapp.intent.action.JUSTASK")
-        startActivityForResult(sendIntent, 2)
-    }
+        val contract = ActivityResultContracts.StartActivityForResult()
+        registerForActivityResult(contract) { result ->
+            val flagPart = result
+                .data
+                ?.getStringExtra("flag")
+                ?: "[null]"
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(resultCode, resultCode, intent)
-
-        val view = findViewById<TextView>(R.id.debug_text)
-        intent?.getExtras()?.let { extras ->
-            flag += extras
-                .keySet()
-                .fold("") { acc, key -> acc + extras.getCharSequence(key) }
-            view.text = flag
-            Log.w("MOBIOTSEC", "Part 2: $flag")
-
+            Log.w("MOBIOTSEC", "Part 2: $flagPart")
             startActivity(
                 Intent(this, PartThree::class.java)
-                    .putExtra("flag", flag)
+                    .putExtra("flag", partialFlag + flagPart)
             )
-        }
+        }.launch(Intent("com.example.victimapp.intent.action.JUSTASK"))
     }
 }

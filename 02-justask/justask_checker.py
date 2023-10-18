@@ -54,7 +54,7 @@ def parse_args():
 def main(args):
     # print("Lauching the emulator")
     # os.system("~/Android/Sdk/emulator/emulator -avd mobiotsec -no-audio -no-boot-anim -accel on -gpu swiftshader_indirect &")
-    time.sleep(3)
+    # time.sleep(3)
     victimApk = APK(args.victimapp_apk_path)
     malApk = APK(args.malapp_apk_path)
     uninstall(victimApk)

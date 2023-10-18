@@ -1,32 +1,27 @@
 package com.example.maliciousapp
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
 class PartFour : AppCompatActivity() {
-    var flag = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        flag = intent?.getStringExtra("flag") ?: "[null]"
-
-        val sendIntent = Intent("com.example.victimapp.intent.action.JUSTASKBUTNOTSOSIMPLE")
-        startActivityForResult(sendIntent, 4)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        super.onActivityResult(resultCode, resultCode, intent)
-
         val view = findViewById<TextView>(R.id.debug_text)
-        intent?.getExtras()?.let { extras ->
-            var bundle = extras.getBundle("follow")
+        val partialFlag = intent?.getStringExtra("flag") ?: "[null]"
+
+        val contract = ActivityResultContracts.StartActivityForResult()
+        registerForActivityResult(contract) { result ->
+            var bundle = result
+                .data
+                ?.getBundleExtra("follow")
             val keys = listOf(
                 "the value",
                 "rabbit",
@@ -36,9 +31,12 @@ class PartFour : AppCompatActivity() {
             for (key in keys) {
                 bundle = bundle?.getBundle(key)
             }
-            flag += bundle?.getCharSequence("never ending story")
+            val flagPart = bundle?.getCharSequence("never ending story") ?: "[null]"
+            Log.w("MOBIOTSEC", "Part 4: $flagPart")
+
+            val flag = partialFlag + flagPart
             view.text = flag
-            Log.w("MOBIOTSEC", "Flag: $flag")
-        }
+            Log.w("MOBIOTSEC", "The flag is $flag")
+        }.launch(Intent("com.example.victimapp.intent.action.JUSTASKBUTNOTSOSIMPLE"))
     }
 }
