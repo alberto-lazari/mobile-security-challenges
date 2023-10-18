@@ -32,7 +32,8 @@ fi
     "system-images;android-33;google_apis_playstore;$arch"
 
 echo Creating virtual device...
-echo no | "$prefix/cmdline-tools/latest/bin/avdmanager" create avd --force \
+echo no | "$prefix/cmdline-tools/latest/bin/avdmanager" create avd > /dev/null \
+    --force \
     -n mobiotsec \
     -k "system-images;android-33;google_apis_playstore;$arch"
 
@@ -50,12 +51,12 @@ fi
 # Link useful binaries and scripts in a PATH directory
 [[ -d ~/bin ]] || mkdir ~/bin
 for link in ~/bin/{adb,emulator,make-app,build-app}; do
-    [[ ! -f $link ]] || rm $link
+    [[ ! -L $link ]] || rm $link
 done
 ln -s "$prefix/platform-tools/adb" ~/bin/adb
-ln -s "$script_dir/make-app" ~/bin/make-app
-ln -s "$script_dir/build-app" ~/bin/build-app
-ln -s "$script_dir/emulator" ~/bin/emulator
+ln -s "$script_dir/bin/make-app" ~/bin/make-app
+ln -s "$script_dir/bin/build-app" ~/bin/build-app
+ln -s "$script_dir/bin/emulator" ~/bin/emulator
 
 # Add ~/bin to PATH
 if ! which adb &> /dev/null; then
