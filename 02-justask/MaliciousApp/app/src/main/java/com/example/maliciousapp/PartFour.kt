@@ -10,6 +10,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
 class PartFour : AppCompatActivity() {
+    fun unwrapBundle(bundle: Bundle): String {
+        // Get the first key (assume only one key in the bundle)
+        val key = bundle
+            .keySet()
+            .iterator()
+            .next()
+
+        bundle.getBundle(key)?.let {
+            return unwrapBundle(it)
+        }
+
+        return bundle.getString(key) ?: "[null]"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -18,25 +32,18 @@ class PartFour : AppCompatActivity() {
         val partialFlag = intent?.getStringExtra("flag") ?: "[null]"
 
         val contract = ActivityResultContracts.StartActivityForResult()
-        registerForActivityResult(contract) { result ->
-            var bundle = result
+        registerForActivityResult(contract) {
+            it
                 .data
-                ?.getBundleExtra("follow")
-            val keys = listOf(
-                "the value",
-                "rabbit",
-                "hole",
-                "deeper",
-            )
-            for (key in keys) {
-                bundle = bundle?.getBundle(key)
-            }
-            val flagPart = bundle?.getCharSequence("never ending story") ?: "[null]"
-            Log.w("MOBIOTSEC", "Part 4: $flagPart")
+                ?.getExtras()
+                ?.let {
+                    val flagPart = unwrapBundle(it)
+                    Log.w("MOBIOTSEC", "Part 4: $flagPart")
 
-            val flag = partialFlag + flagPart
-            view.text = flag
-            Log.w("MOBIOTSEC", "The flag is $flag")
+                    val flag = partialFlag + flagPart
+                    view.text = flag
+                    Log.w("MOBIOTSEC", "The flag is $flag")
+                }
         }.launch(Intent("com.example.victimapp.intent.action.JUSTASKBUTNOTSOSIMPLE"))
     }
 }
