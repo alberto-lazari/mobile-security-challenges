@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class FlagContainer implements Serializable {
-    // This allows to alter the class definition
     private static final long serialVersionUID = 1777556209636587368L;
     private String[] parts;
     private ArrayList<Integer> perm;
@@ -19,9 +18,6 @@ public class FlagContainer implements Serializable {
     }
 
     private String getFlag() {
-    // Hehe
-    // Only works when `serialVersionUID` is defined
-    // public String getFlag() {
         int n = parts.length;
         int i;
         String b64 = new String();

@@ -29,21 +29,17 @@ class MainActivity : AppCompatActivity() {
         }
         val contract = ActivityResultContracts.StartActivityForResult()
         registerForActivityResult(contract) { result ->
-            try {
-                val container = result
-                    .data
-                    ?.getSerializableExtra("flag", FlagContainer::class.java)
+            val container = result
+                .data
+                ?.getSerializableExtra("flag", FlagContainer::class.java)
 
-                container?.let {
-                    val flag = it::class
-                        .java
-                        .getDeclaredMethod("getFlag")
-                        .apply { setAccessible(true) }
-                        .invoke(it)
-                    Log.d(TAG, "The flag is $flag")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, e.toString())
+            container?.let {
+                val flag = it::class
+                    .java
+                    .getDeclaredMethod("getFlag")
+                    .apply { setAccessible(true) }
+                    .invoke(it)
+                Log.d(TAG, "The flag is $flag")
             }
         }.launch(intent)
     }
