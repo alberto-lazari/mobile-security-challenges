@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     val TAG = "MOBIOTSEC"
     val contract = ActivityResultContracts.StartActivityForResult()
 
-    var partialFlag: String = "[null]"
+    var partialFlag = ""
 
     val partOne = registerForActivityResult(contract) { result ->
         val flagPart = result
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
             ?: "[null]"
 
         Log.d(TAG, "Part 1: $flagPart")
-        partialFlag = flagPart
+        partialFlag += flagPart
         partTwo.launch(Intent("com.example.victimapp.intent.action.JUSTASK"))
     }
     val partTwo = registerForActivityResult(contract) { result ->
@@ -55,18 +55,18 @@ class MainActivity : AppCompatActivity() {
         partFour.launch(Intent("com.example.victimapp.intent.action.JUSTASKBUTNOTSOSIMPLE"))
     }
     val partFour = registerForActivityResult(contract) { result ->
-        result
+        val extras = result
             .data
             ?.getExtras()
-            ?.let { extras ->
-                val flagPart = unwrapBundle(extras)
-                Log.d("MOBIOTSEC", "Part 4: $flagPart")
+        extras?.let {
+            val flagPart = unwrapBundle(it)
+            Log.d("MOBIOTSEC", "Part 4: $flagPart")
 
-                val view = findViewById<TextView>(R.id.debug_text)
-                val flag = partialFlag + flagPart
-                view.text = flag
-                Log.d("MOBIOTSEC", "The flag is $flag")
-            }
+            val view = findViewById<TextView>(R.id.debug_text)
+            val flag = partialFlag + flagPart
+            view.text = flag
+            Log.d("MOBIOTSEC", "The flag is $flag")
+        }
     }
 
     fun unwrapBundle(bundle: Bundle): String {
