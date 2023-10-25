@@ -21,7 +21,7 @@ def print_logs():
     f = open("whereareyou_logs.txt", "w")
     subp.call(["adb", "logcat", "-c"])
     try:
-        subp.call(["adb", "logcat", "-s", "MOBIOTSEC"], stdout=f, timeout=3)
+        subp.call(["adb", "logcat", "-s", "MOBIOTSEC"], stdout=f, timeout=1)
     except subp.TimeoutExpired:
         parse_logs()
 
