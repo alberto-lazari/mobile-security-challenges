@@ -11,9 +11,9 @@
         android:label="MaliciousApp"
         android:theme="@style/Theme.AppCompat.DayNight">
         <service
-            android:name=".GimmeLocation"
+            android:name=".MyLocationService"
             android:foregroundServiceType="location"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.mobiotsec.intent.action.GIMMELOCATION" />
             </intent-filter>
