@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 
 import com.example.victimapp.FlagContainer
 
+import dalvik.system.PathClassLoader
+
 import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
@@ -50,6 +52,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun containerClass(): Class<Serializable> {
+        try {
+            val apk = getPackageManager()
+                .getApplicationInfo("com.example.victimapp", 0)
+                .sourceDir
+            val cl = PathClassLoader(apk, ClassLoader.getSystemClassLoader())
+                .loadClass("com.example.victimapp.FlagContainer")
+            Log.d(TAG, cl.toString())
+        } catch (e: Exception) {
+            Log.e(TAG, e.toString())
+        }
+
         return FlagContainer::class.java as Class<Serializable>
     }
 }
