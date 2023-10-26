@@ -16,7 +16,7 @@ APKSIGNER="$build_tools/apksigner"
 
 cd $app_dir
 
-gradle build
+gradle build --warning-mode all
 
 if [[ ! -f $key ]]; then
     cat >&2 <<- EOF
