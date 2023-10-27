@@ -9,7 +9,7 @@ app_dir="$1"
 app=$(tr '[:upper:]' '[:lower:]' <<< $app_dir)
 prefix="$(realpath $(realpath $(which sdkmanager))/../../../..)"
 build_tools="$prefix/build-tools/33.0.0"
-key=~/.android/mykey.keystore
+key=~/.android/debug.keystore
 apk=app/build/outputs/apk/release/app-release-unsigned.apk
 
 APKSIGNER="$build_tools/apksigner"
@@ -19,14 +19,17 @@ cd $app_dir
 gradle build --warning-mode all
 
 if [[ ! -f $key ]]; then
-    cat >&2 <<- EOF
-
-    Error: you don't have a key, create one (use password: "password") with:
-	  keytool -genkey -v -keystore $key -keyalg RSA -sigalg SHA1withRSA -keysize 2048 -validity 10000
-	EOF
-    exit 1
+    keytool -genkey -v \
+        -keystore debug.keystore \
+        -storepass android \
+        -alias androiddebugkey \
+        -dname 'CN=Android Debug,O=Android,C=US' \
+        -keypass android \
+        -keyalg RSA \
+        -keysize 2048 \
+        -validity 10000
 fi
-$APKSIGNER sign --ks $key --ks-pass pass:password $apk
+$APKSIGNER sign --ks $key --ks-pass pass:android $apk
 
 # Move the apk outside of the app directory
 mv $apk ../$app.apk
