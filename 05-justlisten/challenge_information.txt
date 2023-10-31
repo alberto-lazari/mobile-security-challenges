@@ -1,0 +1,2 @@
+Useful documentation for solving this challenge:
+-) Broadcast Receivers: https://developer.android.com/guide/components/broadcasts
