@@ -8,15 +8,16 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.*
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 
 import androidx.core.content.ContextCompat
 
-import com.google.android.gms.location.*
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
 
 class MyLocationService : Service() {
     private val TAG = "MOBIOTSEC"
