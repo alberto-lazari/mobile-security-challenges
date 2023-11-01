@@ -1,3 +1,4 @@
+        android:id="@+id/debug_text"
 #!/bin/bash -e
 
 if [[ -z $1 ]]; then
@@ -74,7 +75,6 @@ fi
 cat > src/main/res/values/strings.xml << EOF
 <resources>
     <string name="app_name">$app_dir</string>
-    <string name="msg">Hello there, I\'m an evil app :)</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
 </resources>
@@ -86,11 +86,12 @@ cat > src/main/res/layout/activity_main.xml << EOF
     android:layout_height="match_parent" >
 
     <TextView
+        android:id="@+id/debug_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/msg"
+        android:text="Hello there, I\'m an evil app :)"
         tools:context=".MainActivity" />
 </RelativeLayout>
 EOF

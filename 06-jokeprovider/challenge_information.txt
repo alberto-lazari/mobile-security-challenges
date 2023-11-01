@@ -1,0 +1,3 @@
+Useful documentation for solving this challenge:
+-) Content providers: https://developer.android.com/guide/topics/providers/content-provider-basics
+-) Package visibility: https://developer.android.com/training/package-visibility/declaring#provider-authority
