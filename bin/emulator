@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/bin/bash
+set -e
 
 print_help () {
     cat >&2 <<- EOF
@@ -18,6 +19,9 @@ kill_it () {
     fi
 
     kill $(cat "$pid") && rm $pid
+
+    # Remove annoying token file
+    rm ~/.emulator_console_auth_token
     exit 0
 }
 
