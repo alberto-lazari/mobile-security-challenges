@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-# ~/Android/Sdk/tools/bin/avdmanager list avd
-# ~/Android/Sdk/tools/avdmanager create avd --force --name mobiotsec --abi google_apis/x86 --package 'system-images;android-26;google_apis;x86'
-# ~/Android/Sdk/emulator/emulator -avd mobiotsec -no-audio -no-boot-anim -accel on -gpu swiftshader_indirect &
-
-# TODO check if the emulator is already running
 
 import argparse
 import os
@@ -54,10 +48,6 @@ def parse_args():
     return args
 
 def main(args):
-    # It's better to have it already launched
-    # print("Lauching the emulator")
-    # os.system("emulator -avd mobiotsec -no-audio -no-boot-anim -accel on -gpu swiftshader_indirect &")
-    time.sleep(3)
     victimApk = APK(args.victimapp_apk_path)
     malApk = APK(args.malapp_apk_path)
     uninstall(victimApk)
@@ -65,7 +55,6 @@ def main(args):
     uninstall(malApk)
     install(malApk)
     launch_app(victimApk)
-    #time.sleep(2)
     print_logs()
 
 if __name__ == "__main__":
