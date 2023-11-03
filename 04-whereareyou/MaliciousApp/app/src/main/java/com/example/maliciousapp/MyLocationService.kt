@@ -8,69 +8,55 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
 
 import androidx.core.content.ContextCompat
 
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
+const val TAG = "MOBIOTSEC"
+const val ACTION = "com.mobiotsec.intent.action.LOCATION_ANNOUNCEMENT"
 
 class MyLocationService : Service() {
-    private val TAG = "MOBIOTSEC"
-
     override fun onCreate () {
-        if (
-            ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            val locationRequest = LocationRequest
-                .Builder(1000)
-                .build()
-            val locationCallback: LocationCallback = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    for (location in locationResult.locations) {
-                        val intent = Intent().apply {
-                            setAction("com.mobiotsec.intent.action.LOCATION_ANNOUNCEMENT")
-                            putExtra("location", location)
-                        }
-                        sendBroadcast(intent)
-                    }
-                }
+        val listener = object : LocationListener {
+            override fun onLocationChanged(location: Location) {
+                sendBroadcast(Intent().apply {
+                    setAction(ACTION)
+                    putExtra("location", location)
+                })
             }
-
-            fusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.getMainLooper()
-            )
-        } else {
-            Log.e(TAG, "Location permission not granted")
         }
-    }
-
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val channel = NotificationChannel(
-            "location_service_notification",
-            "Location service notification",
-            NotificationManager.IMPORTANCE_DEFAULT
+        val fineLocationPermission = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
         )
+        when(fineLocationPermission) {
+            PackageManager.PERMISSION_GRANTED ->
+                getSystemService(LocationManager::class.java).requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER,
+                    1L,
+                    .1f,
+                    listener
+                )
+            else -> Log.e(TAG, "Location permission not granted")
+        }
+
         getSystemService(NotificationManager::class.java)
-            .apply { createNotificationChannel(channel) }
-        val notification = Notification.Builder(this, "location_service_notification")
+            .createNotificationChannel(NotificationChannel(
+                "location_service_notification",
+                "Location service notification",
+                NotificationManager.IMPORTANCE_DEFAULT
+            ))
+
+        startForeground(1, Notification
+            .Builder(this, "location_service_notification")
             .setContentTitle("Location service")
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .build()
-
-        startForeground(1, notification)
-        return Service.START_STICKY
+        )
     }
 
     override fun onBind(intent: Intent): IBinder? {
