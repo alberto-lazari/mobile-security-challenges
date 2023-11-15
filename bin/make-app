@@ -1,5 +1,5 @@
-        android:id="@+id/debug_text"
-#!/bin/bash -e
+#!/bin/bash
+set -e
 
 if [[ -z $1 ]]; then
     echo usage: make-app APP >&2

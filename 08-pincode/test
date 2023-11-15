@@ -1,0 +1,12 @@
+#!/bin/bash
+set -e
+
+# build-app BruteForce
+#
+# adb uninstall com.example.bruteforce || true
+# adb install bruteforce.apk
+#
+# adb shell am start -n com.example.bruteforce/.MainActivity
+# adb logcat -s MOBIOTSEC | sed 's/.*MOBIOTSEC: //'
+
+javac bruteforce.java && java PinChecker 2>&1 | grep -o 'The PIN is: .*\|PIN: .* d04988522ddfed3133cc24fb6924eae9'
