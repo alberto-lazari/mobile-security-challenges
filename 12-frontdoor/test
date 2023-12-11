@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+cd $(dirname "$BASH_SOURCE")
+
+build-app MaliciousApp
+adb uninstall com.example.maliciousapp | true
+adb install maliciousapp.apk
+
+adb logcat -b all -c
+adb logcat -s MOBIOTSEC
