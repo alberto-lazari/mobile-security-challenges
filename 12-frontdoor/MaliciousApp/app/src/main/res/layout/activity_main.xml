@@ -8,6 +8,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="Hello there, I\'m an evil app :)"
+        android:text="Retrieving the flag..."
         tools:context=".MainActivity" />
 </RelativeLayout>
