@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/bin/bash
+set -e
 
 if [[ -z $1 ]]; then
     echo usage: build-app APP_DIR >&2
@@ -20,7 +21,7 @@ gradle build --warning-mode all
 
 if [[ ! -f $key ]]; then
     keytool -genkey -v \
-        -keystore debug.keystore \
+        -keystore $key \
         -storepass android \
         -alias androiddebugkey \
         -dname 'CN=Android Debug,O=Android,C=US' \
